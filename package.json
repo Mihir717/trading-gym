@@ -1,0 +1,13 @@
+{
+  "name": "trading-gym",
+  "version": "1.0.0",
+  "description": "Trading Gym - Practice trading with real historical data",
+  "scripts": {
+    "start": "cd backend && node server.js",
+    "install-backend": "cd backend && npm install",
+    "postinstall": "cd backend && npm install"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
