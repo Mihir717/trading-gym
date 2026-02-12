@@ -6,37 +6,77 @@ const router = express.Router();
 
 router.post('/start', authMiddleware, async (req, res) => {
   try {
-    const { asset, timeframe, initialBalance } = req.body;
+    const { asset, timeframe, initialBalance, startDate } = req.body;
     const userId = req.user.userId;
 
-    const randomStart = await db.query(`
-      SELECT timestamp 
-      FROM market_data 
-      WHERE asset = $1 AND timeframe = $2
-      ORDER BY RANDOM() 
-      LIMIT 1
-    `, [asset, timeframe]);
+    let sessionStartDate;
 
-    if (randomStart.rows.length === 0) {
-      return res.status(404).json({ error: 'No market data available for this asset' });
+    if (startDate) {
+      // User specified a start date - find the nearest available candle
+      const nearestCandle = await db.query(`
+        SELECT timestamp
+        FROM market_data
+        WHERE asset = $1 AND timeframe = $2 AND timestamp >= $3
+        ORDER BY timestamp ASC
+        LIMIT 1
+      `, [asset, timeframe, startDate]);
+
+      if (nearestCandle.rows.length === 0) {
+        // If no candle after the date, get the last available candle
+        const lastCandle = await db.query(`
+          SELECT timestamp
+          FROM market_data
+          WHERE asset = $1 AND timeframe = $2
+          ORDER BY timestamp DESC
+          LIMIT 1
+        `, [asset, timeframe]);
+
+        if (lastCandle.rows.length === 0) {
+          return res.status(404).json({ error: 'No market data available for this asset/timeframe' });
+        }
+        sessionStartDate = lastCandle.rows[0].timestamp;
+      } else {
+        sessionStartDate = nearestCandle.rows[0].timestamp;
+      }
+    } else {
+      // No start date specified - pick a random start point
+      const randomStart = await db.query(`
+        SELECT timestamp
+        FROM market_data
+        WHERE asset = $1 AND timeframe = $2
+        ORDER BY RANDOM()
+        LIMIT 1
+      `, [asset, timeframe]);
+
+      if (randomStart.rows.length === 0) {
+        return res.status(404).json({ error: 'No market data available for this asset' });
+      }
+      sessionStartDate = randomStart.rows[0].timestamp;
     }
-
-    const startDate = randomStart.rows[0].timestamp;
 
     const result = await db.query(`
       INSERT INTO sessions (user_id, asset, timeframe, start_date, initial_balance)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *
-    `, [userId, asset, timeframe, startDate, initialBalance || 10000]);
+    `, [userId, asset, timeframe, sessionStartDate, initialBalance || 10000]);
 
     const session = result.rows[0];
+
+    // Get the price at session start for reference
+    const startCandle = await db.query(`
+      SELECT open, close FROM market_data
+      WHERE asset = $1 AND timeframe = $2 AND timestamp = $3
+    `, [asset, timeframe, sessionStartDate]);
+
+    const startPrice = startCandle.rows[0]?.open || 0;
 
     res.json({
       sessionId: session.id,
       startDate: session.start_date,
       asset: session.asset,
       timeframe: session.timeframe,
-      initialBalance: session.initial_balance
+      initialBalance: parseFloat(session.initial_balance),
+      startPrice: parseFloat(startPrice)
     });
   } catch (error) {
     console.error('Start session error:', error);
@@ -47,7 +87,7 @@ router.post('/start', authMiddleware, async (req, res) => {
 router.get('/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const result = await db.query(
       'SELECT * FROM sessions WHERE id = $1 AND user_id = $2',
       [id, req.user.userId]

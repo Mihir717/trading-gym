@@ -1,7 +1,9 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
+  "name": "trading-gym-frontend",
+  "version": "1.0.0",
+  "description": "Trading Gym - Practice trading with real historical data",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",

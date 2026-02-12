@@ -1,14 +1,25 @@
 {
-  "name": "mihirchandorkar",
+  "name": "trading-gym-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
- "scripts": {
-  "test": "echo \"Error: no test specified\" && exit 1",
-  "start": "node server.js",
-  "dev": "nodemon server.js"
-},
-  "keywords": [],
+  "description": "Trading Gym API - Practice trading with real historical data",
+  "main": "server.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "fetch-data": "node scripts/fetchRealBTCData.js",
+    "fetch-multi-data": "node scripts/fetchMultiAssetData.js",
+    "fetch-all": "node scripts/fetchAllAssetsData.js",
+    "fetch-crypto": "node scripts/fetchAllAssetsData.js --category=crypto",
+    "fetch-forex": "node scripts/fetchAllAssetsData.js --category=forex",
+    "fetch-commodities": "node scripts/fetchAllAssetsData.js --category=commodities"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["trading", "crypto", "bitcoin", "practice"],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
@@ -23,6 +34,8 @@
     "pg": "^8.17.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.11",
+    "supertest": "^7.0.0"
   }
 }

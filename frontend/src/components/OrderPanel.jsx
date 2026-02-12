@@ -11,7 +11,6 @@ function OrderPanel({ currentPrice = 0 }) {
   const [takeProfit, setTakeProfit] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // FIXED VERSION
   const safePrice = Number(currentPrice) || 0;
 
   const handleTrade = async (tradeType) => {
@@ -41,75 +40,77 @@ function OrderPanel({ currentPrice = 0 }) {
   };
 
   return (
-    <div className="bg-bg-secondary rounded-lg border border-border p-4">
-      <h3 className="text-lg font-bold mb-4">Place Order</h3>
+    <div className="space-y-3">
+      <div>
+        <label className="block text-xs text-purple-300 mb-1.5 font-medium">
+          Position Size (BTC)
+        </label>
+        <input
+          type="number"
+          value={positionSize}
+          onChange={(e) => setPositionSize(parseFloat(e.target.value))}
+          step="0.01"
+          min="0.01"
+          className="w-full px-3 py-2 bg-purple-900/20 border border-purple-500/20 rounded-lg focus:outline-none focus:border-purple-500/50 text-white transition-all"
+          style={{ fontSize: '0.875rem' }}
+        />
+      </div>
 
-      <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className="block text-sm text-text-secondary mb-1">
-            Current Price
-          </label>
-          <div className="text-2xl font-bold text-accent-green">
-            ${safePrice.toFixed(2)}
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm text-text-secondary mb-1">
-            Position Size (BTC)
-          </label>
-          <input
-            type="number"
-            value={positionSize}
-            onChange={(e) => setPositionSize(parseFloat(e.target.value))}
-            step="0.01"
-            min="0.01"
-            className="w-full px-3 py-2 bg-bg-primary border border-border rounded focus:outline-none focus:border-accent-green"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm text-text-secondary mb-1">
-            Stop Loss (Optional)
+          <label className="block text-xs text-purple-300 mb-1.5 font-medium">
+            Stop Loss
           </label>
           <input
             type="number"
             value={stopLoss}
             onChange={(e) => setStopLoss(e.target.value)}
-            placeholder="Enter price"
-            className="w-full px-3 py-2 bg-bg-primary border border-border rounded focus:outline-none focus:border-accent-green"
+            placeholder="Optional"
+            className="w-full px-3 py-2 bg-purple-900/20 border border-purple-500/20 rounded-lg focus:outline-none focus:border-purple-500/50 text-white placeholder-gray-600 transition-all"
+            style={{ fontSize: '0.875rem' }}
           />
         </div>
 
         <div>
-          <label className="block text-sm text-text-secondary mb-1">
-            Take Profit (Optional)
+          <label className="block text-xs text-purple-300 mb-1.5 font-medium">
+            Take Profit
           </label>
           <input
             type="number"
             value={takeProfit}
             onChange={(e) => setTakeProfit(e.target.value)}
-            placeholder="Enter price"
-            className="w-full px-3 py-2 bg-bg-primary border border-border rounded focus:outline-none focus:border-accent-green"
+            placeholder="Optional"
+            className="w-full px-3 py-2 bg-purple-900/20 border border-purple-500/20 rounded-lg focus:outline-none focus:border-purple-500/50 text-white placeholder-gray-600 transition-all"
+            style={{ fontSize: '0.875rem' }}
           />
         </div>
+      </div>
 
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={() => handleTrade('BUY')}
-            disabled={loading || !safePrice}
-            className="py-3 bg-accent-green hover:bg-accent-green/90 rounded font-medium disabled:opacity-50"
-          >
-            BUY
-          </button>
-          <button
-            onClick={() => handleTrade('SELL')}
-            disabled={loading || !safePrice}
-            className="py-3 bg-accent-red hover:bg-accent-red/90 rounded font-medium disabled:opacity-50"
-          >
-            SELL
-          </button>
-        </div>
+      <div className="grid grid-cols-2 gap-2 pt-1">
+        <button
+          onClick={() => handleTrade('BUY')}
+          disabled={loading || !safePrice}
+          className="py-2.5 rounded-lg font-semibold disabled:opacity-50 transition-all shadow-lg"
+          style={{
+            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+            color: 'white',
+            fontSize: '0.875rem'
+          }}
+        >
+          BUY
+        </button>
+        <button
+          onClick={() => handleTrade('SELL')}
+          disabled={loading || !safePrice}
+          className="py-2.5 rounded-lg font-semibold disabled:opacity-50 transition-all shadow-lg"
+          style={{
+            background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+            color: 'white',
+            fontSize: '0.875rem'
+          }}
+        >
+          SELL
+        </button>
       </div>
     </div>
   );
