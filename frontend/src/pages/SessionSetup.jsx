@@ -165,7 +165,7 @@ function SessionSetup({ onSessionStart }) {
       }
     }
     fetchAvailableData();
-  }, [formData.asset]); // Re-fetch when asset changes
+  }, [formData.asset, formData.timeframe]); // Re-fetch when asset changes
 
   // Update date range when timeframe changes
   useEffect(() => {
@@ -184,7 +184,7 @@ function SessionSetup({ onSessionStart }) {
         }
       }
     }
-  }, [formData.timeframe, availableData]);
+  }, [formData.timeframe, formData.startDate, availableData]);
 
   const getCurrentTimeframeData = () => {
     if (!availableData?.timeframes) return null;

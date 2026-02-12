@@ -152,8 +152,7 @@ function TradingDashboard() {
   const safeBalance = Number(balance) || 0;
   const totalPnL = safeBalance - (session?.initialBalance || 10000);
 
-  // Calculate total candles/ticks for progress display
-  const totalCandles = candlesWithTicks.length;
+  // Calculate total ticks for progress display
   const currentCandle = candlesWithTicks[currentCandleIndex];
   const totalTicks = currentCandle?.ticks?.length || 0;
 

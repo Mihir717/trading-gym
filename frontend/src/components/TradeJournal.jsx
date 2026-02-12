@@ -3,7 +3,6 @@ import useStore from '../store/useStore';
 import { format } from 'date-fns';
 import {
   BookOpen,
-  Tag,
   Edit3,
   Save,
   X,

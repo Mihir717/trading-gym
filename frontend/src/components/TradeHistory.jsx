@@ -15,9 +15,7 @@ function TradeHistory() {
     );
   }
 
-  const totalPnL = closedTrades.reduce((sum, trade) => sum + parseFloat(trade.pnl || 0), 0);
   const winningTrades = closedTrades.filter(t => parseFloat(t.pnl) > 0);
-  const losingTrades = closedTrades.filter(t => parseFloat(t.pnl) < 0);
   const biggestWin = Math.max(...closedTrades.map(t => parseFloat(t.pnl || 0)));
   const biggestLoss = Math.min(...closedTrades.map(t => parseFloat(t.pnl || 0)));
 
