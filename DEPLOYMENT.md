@@ -144,6 +144,40 @@ When you're ready to scale beyond free tier:
 2. **Supabase**: Upgrade to Pro ($25/month) for more storage
 3. **Vercel**: Pro tier ($20/month) for team features
 
+## Pre-Deployment Checklist
+
+Before deploying, run the validation script to verify your environment:
+
+```bash
+cd backend
+npm run validate-env
+```
+
+This checks:
+- All required environment variables are set
+- `DATABASE_URL` format and connectivity
+- Schema tables exist in the database
+- Market data is populated
+- JWT secret strength
+
+### Manual Checks
+
+- [ ] `JWT_SECRET` is a strong random string (32+ characters)
+- [ ] `FRONTEND_URL` matches your Vercel deployment URL exactly (including `https://`)
+- [ ] Database schema has been applied (`backend/db/schema.sql`)
+- [ ] Market data has been fetched (at least BTC)
+- [ ] CORS is tested: frontend can reach backend API
+- [ ] Health check endpoint responds: `curl https://your-backend-url/health`
+
+## CI/CD
+
+This project includes a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs automatically on pushes and pull requests to `main`:
+
+- **Backend**: Installs dependencies, applies schema to a test Postgres instance, and runs tests
+- **Frontend**: Installs dependencies, runs a production build, and runs tests
+
+Deployment to Railway and Vercel happens via their respective GitHub integrations (automatic deploys on push to `main`).
+
 ## Support
 
 If you encounter issues:

@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: trading_gym_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: backend
+
+      - name: Run schema migrations
+        run: psql -f db/schema.sql
+        working-directory: backend
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: test
+          PGPASSWORD: test
+          PGDATABASE: trading_gym_test
+
+      - name: Run tests
+        run: npm test -- --forceExit --detectOpenHandles
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/trading_gym_test
+          JWT_SECRET: test-secret-for-ci
+          NODE_ENV: test
+
+  frontend-build:
+    name: Frontend Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build
+        run: npm run build
+        working-directory: frontend
+        env:
+          REACT_APP_API_URL: https://placeholder.example.com/api
+          CI: true
+
+      - name: Run tests
+        run: npm test -- --watchAll=false --forceExit
+        working-directory: frontend
+        env:
+          CI: true

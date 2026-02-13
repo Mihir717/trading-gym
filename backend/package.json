@@ -14,7 +14,8 @@
     "fetch-all": "node scripts/fetchAllAssetsData.js",
     "fetch-crypto": "node scripts/fetchAllAssetsData.js --category=crypto",
     "fetch-forex": "node scripts/fetchAllAssetsData.js --category=forex",
-    "fetch-commodities": "node scripts/fetchAllAssetsData.js --category=commodities"
+    "fetch-commodities": "node scripts/fetchAllAssetsData.js --category=commodities",
+    "validate-env": "node scripts/validate-env.js"
   },
   "engines": {
     "node": ">=18.0.0"
