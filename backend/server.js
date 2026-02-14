@@ -41,7 +41,12 @@ app.use('/api/trades', require('./routes/trades'));
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'Trading Gym API is running!' });
+  const db = require('./db');
+  res.json({
+    status: 'Trading Gym API is running!',
+    database: db.isConnected() ? 'connected' : 'not configured',
+    environment: process.env.NODE_ENV || 'development'
+  });
 });
 
 // Error handling middleware
