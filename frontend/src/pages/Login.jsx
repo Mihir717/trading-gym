@@ -249,15 +249,14 @@ function Login({ onLoginSuccess }) {
             </button>
           </form>
 
-          {/* Demo Account */}
+          {/* Help text */}
           <div style={{
             marginTop: '1.5rem',
             paddingTop: '1.5rem',
             borderTop: '1px solid rgba(139, 92, 246, 0.1)'
           }}>
             <p style={{ color: 'rgba(196, 181, 253, 0.5)', fontSize: '0.75rem', textAlign: 'center' }}>
-              <span style={{ display: 'block', marginBottom: '0.25rem' }}>Demo Account:</span>
-              <span style={{ fontFamily: 'monospace' }}>test@tradinggym.com / password123</span>
+              Create an account to start practicing. Your data is stored securely.
             </p>
           </div>
         </div>

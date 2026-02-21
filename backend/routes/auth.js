@@ -21,7 +21,7 @@ router.post('/register',
       const { email, password } = req.body;
 
       const existingUser = await db.query(
-        'SELECT * FROM users WHERE email = $1',
+        'SELECT * FROM public.users WHERE email = $1',
         [email]
       );
 
@@ -29,11 +29,11 @@ router.post('/register',
         return res.status(400).json({ error: 'User already exists' });
       }
 
-      const password_hash = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, 10);
 
       const result = await db.query(
-        'INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id, email, subscription_tier',
-        [email, password_hash]
+        'INSERT INTO public.users (email, password) VALUES ($1, $2) RETURNING id, email',
+        [email, hashedPassword]
       );
 
       const user = result.rows[0];
@@ -48,8 +48,7 @@ router.post('/register',
         token,
         user: {
           id: user.id,
-          email: user.email,
-          subscription_tier: user.subscription_tier
+          email: user.email
         }
       });
     } catch (error) {
@@ -64,7 +63,7 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     const result = await db.query(
-      'SELECT * FROM users WHERE email = $1',
+      'SELECT * FROM public.users WHERE email = $1',
       [email]
     );
 
@@ -74,7 +73,7 @@ router.post('/login', async (req, res) => {
 
     const user = result.rows[0];
 
-    const validPassword = await bcrypt.compare(password, user.password_hash);
+    const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
@@ -89,8 +88,7 @@ router.post('/login', async (req, res) => {
       token,
       user: {
         id: user.id,
-        email: user.email,
-        subscription_tier: user.subscription_tier
+        email: user.email
       }
     });
   } catch (error) {
