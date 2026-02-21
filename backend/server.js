@@ -40,12 +40,28 @@ app.use('/api/replay', require('./routes/replay'));
 app.use('/api/trades', require('./routes/trades'));
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/health', async (req, res) => {
   const db = require('./db');
+  let dbStatus = 'not configured';
+  let dbError = null;
+
+  if (db.isConnected()) {
+    try {
+      await db.query('SELECT 1');
+      dbStatus = 'connected';
+    } catch (err) {
+      dbStatus = 'error';
+      dbError = err.message;
+    }
+  }
+
   res.json({
     status: 'Trading Gym API is running!',
-    database: db.isConnected() ? 'connected' : 'not configured',
-    environment: process.env.NODE_ENV || 'development'
+    database: dbStatus,
+    dbError: dbError,
+    environment: process.env.NODE_ENV || 'development',
+    hasDbUrl: !!process.env.DATABASE_URL,
+    hasJwtSecret: !!process.env.JWT_SECRET
   });
 });
 
