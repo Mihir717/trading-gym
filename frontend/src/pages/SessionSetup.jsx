@@ -14,7 +14,7 @@ function SessionSetup({ onSessionStart }) {
 
   const [formData, setFormData] = useState({
     asset: 'BTCUSDT',
-    timeframe: '1h',
+    timeframe: '5m', // Changed default to 5m since that's what most assets have
     initialBalance: 10000,
     progressiveMode: true,
     startDate: '',
