@@ -1,13 +1,14 @@
 const express = require('express');
 const db = require('../db');
-const authMiddleware = require('../middleware/auth');
+// AUTH DISABLED FOR TESTING
+// const authMiddleware = require('../middleware/auth');
 
 const router = express.Router();
 
-router.post('/start', authMiddleware, async (req, res) => {
+router.post('/start', async (req, res) => {
   try {
     const { asset, timeframe, initialBalance, startDate } = req.body;
-    const userId = req.user.userId;
+    const userId = 1; // AUTH DISABLED - use dummy user ID
 
     let sessionStartDate;
 
@@ -84,13 +85,14 @@ router.post('/start', authMiddleware, async (req, res) => {
   }
 });
 
-router.get('/:id', authMiddleware, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
+    // AUTH DISABLED - skip user check
     const result = await db.query(
-      'SELECT * FROM sessions WHERE id = $1 AND user_id = $2',
-      [id, req.user.userId]
+      'SELECT * FROM sessions WHERE id = $1',
+      [id]
     );
 
     if (result.rows.length === 0) {

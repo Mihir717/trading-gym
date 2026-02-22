@@ -1,11 +1,12 @@
 const express = require('express');
 const db = require('../db');
-const authMiddleware = require('../middleware/auth');
+// AUTH DISABLED FOR TESTING
+// const authMiddleware = require('../middleware/auth');
 
 const router = express.Router();
 
 // Get available date range for historical data
-router.get('/date-range', authMiddleware, async (req, res) => {
+router.get('/date-range', async (req, res) => {
   try {
     const { asset = 'BTCUSDT', timeframe = '1d' } = req.query;
 
@@ -39,7 +40,7 @@ router.get('/date-range', authMiddleware, async (req, res) => {
 });
 
 // Get available timeframes and their date ranges
-router.get('/available-data', authMiddleware, async (req, res) => {
+router.get('/available-data', async (req, res) => {
   try {
     const { asset = 'BTCUSDT' } = req.query;
 
@@ -79,13 +80,14 @@ router.get('/available-data', authMiddleware, async (req, res) => {
 });
 
 // Get candles for a session
-router.get('/candles', authMiddleware, async (req, res) => {
+router.get('/candles', async (req, res) => {
   try {
     const { sessionId, offset = 0, limit = 100 } = req.query;
 
+    // AUTH DISABLED - skip user check
     const session = await db.query(
-      'SELECT * FROM sessions WHERE id = $1 AND user_id = $2',
-      [sessionId, req.user.userId]
+      'SELECT * FROM sessions WHERE id = $1',
+      [sessionId]
     );
 
     if (session.rows.length === 0) {
@@ -115,13 +117,14 @@ router.get('/candles', authMiddleware, async (req, res) => {
 });
 
 // Get candle ticks for progressive candle formation
-router.get('/ticks', authMiddleware, async (req, res) => {
+router.get('/ticks', async (req, res) => {
   try {
     const { sessionId, offset = 0, limit = 100 } = req.query;
 
+    // AUTH DISABLED - skip user check
     const session = await db.query(
-      'SELECT * FROM sessions WHERE id = $1 AND user_id = $2',
-      [sessionId, req.user.userId]
+      'SELECT * FROM sessions WHERE id = $1',
+      [sessionId]
     );
 
     if (session.rows.length === 0) {
@@ -166,13 +169,14 @@ router.get('/ticks', authMiddleware, async (req, res) => {
 });
 
 // Get candles with their ticks bundled together
-router.get('/candles-with-ticks', authMiddleware, async (req, res) => {
+router.get('/candles-with-ticks', async (req, res) => {
   try {
     const { sessionId, offset = 0, limit = 100 } = req.query;
 
+    // AUTH DISABLED - skip user check
     const session = await db.query(
-      'SELECT * FROM sessions WHERE id = $1 AND user_id = $2',
-      [sessionId, req.user.userId]
+      'SELECT * FROM sessions WHERE id = $1',
+      [sessionId]
     );
 
     if (session.rows.length === 0) {
