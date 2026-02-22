@@ -5,7 +5,8 @@ import TradingDashboard from './pages/TradingDashboard';
 import useStore from './store/useStore';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+  // AUTH DISABLED FOR TESTING - Skip login entirely
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // Always logged in
   const [hasSession, setHasSession] = useState(false);
   const [showResumePrompt, setShowResumePrompt] = useState(false);
   const [savedSessionInfo, setSavedSessionInfo] = useState(null);
