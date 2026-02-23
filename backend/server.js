@@ -11,26 +11,8 @@ app.set('trust proxy', 1);
 // Middleware
 app.use(helmet());
 
-// CORS configuration for production
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:3001',
-  process.env.FRONTEND_URL,
-].filter(Boolean);
-
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
-}));
+// CORS - allow all origins for testing
+app.use(cors());
 app.use(express.json());
 
 // Routes
